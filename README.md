@@ -1,75 +1,105 @@
-# PRINGGASURYA Smart Irrigation
+# PRINGGASURYA
 
-PRINGGASURYA adalah prototipe dashboard irigasi pintar untuk konsep **solar-first, grid-assisted smart irrigation** di Pringgarata. Aplikasi menggabungkan pemantauan air, energi surya, cadangan PLN, zona tanaman, emisi, dan perangkat lapangan dalam satu antarmuka.
+PRINGGASURYA adalah prototipe platform **solar-first, grid-assisted smart irrigation** untuk Kecamatan Pringgarata, Kabupaten Lombok Tengah, Nusa Tenggara Barat. Sistem menyatukan energi, air, pertanian, analisis ekonomi, dan dampak lingkungan dalam satu antarmuka.
 
-> Dashboard saat ini menggunakan data simulasi untuk mendemonstrasikan alur sistem. Pengendalian perangkat fisik harus melalui RTU dan interlock keselamatan lokal.
+> **Simulation Mode:** seluruh telemetry, tren, peringatan, dan kontrol pada versi ini adalah simulasi. Aplikasi belum terhubung ke pompa, sensor, MQTT, database, atau jaringan PLN.
 
-## Fitur
+## Prinsip sistem
 
-- Ringkasan kondisi air, tandon, debit, energi, dan status sistem.
-- Profil irigasi Padi, Hortikultura, dan Palawija.
-- Simulasi kontrol pompa dan katup untuk beberapa zona.
-- Pemantauan produksi PLTS, konsumsi pompa, PLN, dan emisi terhindarkan.
-- Katalog sensor berisi tipe, sinyal, lokasi, koneksi, interval, dan perawatan.
-- Riwayat aktivitas serta indikator evaluasi pilot.
-- Tampilan responsif untuk desktop dan perangkat seluler.
+1. PLTS menjadi sumber utama saat energi matahari tersedia.
+2. PLN membantu ketika produksi surya tidak mencukupi atau kebutuhan air tidak dapat ditunda.
+3. Pompa memindahkan air ke tandon sebagai buffer operasional.
+4. Baterai kecil/UPS hanya menopang sensor, RTU, dan komunikasi.
+5. Proteksi pompa tetap berjalan pada panel dan RTU lapangan tanpa bergantung pada internet.
 
-## Arsitektur lapangan
+**Instead of storing electricity, we store water.**
+
+## Modul antarmuka
+
+- **Home:** narasi masalah, solusi, cara kerja, dampak, dan skalabilitas.
+- **Operate:** Live Monitoring, Water, Energy, Smart Irrigation, Water Quality, dan Alerts.
+- **Analyze:** Analytics, Environmental Impact, dan Economic Analysis.
+- **Plan:** System Sizing, Scalability, dan Deployment.
+- **Research:** Study Area, Methodology, dan References.
+- **Settings:** kesiapan environment dan batas integrasi.
+
+Routing memakai `HashRouter` agar setiap rute aman dibuka pada GitHub Pages, misalnya `/#/operate/live`.
+
+## Arsitektur frontend
 
 ```text
-Sensor lapangan
-      ↓
-I/O RS485, 4–20 mA, dan digital yang terisolasi
-      ↓
-RTU ESP32 industri dan interlock lokal
-      ↓
-LoRa AS923 / MQTT gateway
-      ↓
-Dashboard PRINGGASURYA
+src/
+├── app/                 # providers dan route composition
+├── components/          # komponen umum, chart, dan system flow
+├── config/              # navigation configuration
+├── contexts/            # crop dan scenario selection
+├── domain/              # type, schema, dan sensor catalog
+├── hooks/               # query hooks
+├── layouts/             # desktop sidebar, topbar, mobile navigation
+├── pages/               # route-level modules
+├── services/
+│   ├── contracts/       # interface bebas implementasi data
+│   └── simulation/      # scenario-based telemetry engine
+└── styles/              # design tokens dan responsive system
 ```
 
-Perintah dari dashboard hanya berupa permintaan atau setpoint. RTU tetap memeriksa float switch, dry-run, overload, tekanan, emergency stop, dan status kontaktor sebelum menjalankan pompa.
+Frontend tidak boleh terhubung langsung ke hardware atau MQTT. Jalur integrasi masa depan:
 
-## Sensor dan aktuator
+```text
+Sensor/aktuator → RTU & interlock → gateway → MQTT → backend → API/SSE → frontend
+```
 
-| Kode | Perangkat | Jenis utama | Sinyal | Prioritas |
+## Sensor dan aktuator utama
+
+| Kode | Parameter | Jenis awal | Sinyal | Penggunaan |
 |---|---|---|---|---|
-| WL-01 | Tinggi muka air sawah | Vented hydrostatic level transmitter 0–1 m, IP68 | 4–20 mA | Wajib untuk padi |
-| TL-01 | Ketinggian tandon | Ultrasonic level sensor IP67 | RS485/4–20 mA | Wajib |
-| FS-01 | Batas tandon | Float switch high/low, normally closed | Dry contact | Wajib |
-| FM-01 | Debit air | Electromagnetic flow meter IP67 | RS485 + pulse | Wajib |
-| PT-01 | Tekanan pompa | Pressure transmitter 0–10 bar | 4–20 mA | Disarankan |
-| SM-01 | Kelembapan tanah | FDR/capacitive multi-depth probe IP68 | RS485 | Wajib untuk hortikultura/palawija |
-| PH-01 | pH air | Industrial immersion pH probe | RS485/4–20 mA | Disarankan |
-| EC-01 | Konduktivitas air | Conductivity sensor dengan kompensasi suhu | RS485/4–20 mA | Disarankan |
-| TU-01 | Kekeruhan air | Optical turbidity sensor | RS485 | Opsional |
-| EM-01 | Energi pompa dan PLN | Multifunction energy meter + CT | RS485 | Wajib |
-| PV-01 | Daya panel surya | Inverter/MPPT register atau DC meter | RS485 | Wajib |
-| WX-01 | Cuaca mikro | SHT35, rain gauge, pyranometer opsional | RS485/SDI-12/pulse | Opsional |
-| MV-01 | Katup zona | Motorized valve dengan limit switch | 24 VDC + feedback | Aktuator |
+| WL-01 | Muka air sawah | Vented hydrostatic level transmitter, IP68 | 4–20 mA | Parameter utama padi/AWD |
+| TL-01 | Level tandon | Ultrasonic level sensor, IP67 | RS485/4–20 mA | Persediaan dan kontrol pengisian |
+| FS-01 | Batas tandon | Float switch high/low, NC | Dry contact | Proteksi independen |
+| FM-01 | Debit utama | Electromagnetic flow meter, IP67 | RS485 + pulse | Volume, dry-run, kebocoran |
+| PT-01 | Tekanan discharge | Pressure transmitter 0–10 bar | 4–20 mA | Sumbatan dan kondisi pompa |
+| SM-01 | Kelembapan tanah | FDR/capacitive multi-depth, IP68 | RS485 | Hortikultura dan palawija |
+| PH-01 | pH air | Industrial immersion pH probe | RS485/4–20 mA | Peringatan dini kualitas |
+| EC-01 | Konduktivitas | EC sensor + kompensasi suhu | RS485/4–20 mA | Salinitas/perubahan ion |
+| TU-01 | Kekeruhan | Optical turbidity sensor | RS485 | Sedimen dan risiko sumbatan |
+| EM-01 | Energi pompa/PLN | Multifunction meter + CT | RS485 | Daya, tegangan, arus, kWh |
+| PV-01 | Produksi PLTS | Register inverter/MPPT | RS485 | Daya dan solar fraction |
+| WX-01 | Cuaca mikro | SHT35 + rain gauge | RS485/SDI-12 | ET dan evaluasi agrivoltaik |
+| MV-01 | Katup zona | Motorized valve + limit switch | Relay + feedback | Distribusi per zona |
 
-## Menjalankan secara lokal
+Spesifikasi final harus mengikuti survei debit, total dynamic head, kualitas air, jenis tanah, pola tanam, dan kondisi instalasi.
+
+## Menjalankan lokal
+
+Prasyarat: Node.js 24 dan npm.
 
 ```bash
 npm install
+cp .env.example .env
 npm run dev
 ```
 
-Untuk memastikan versi produksi dapat dibuat:
+Pemeriksaan sebelum commit:
 
 ```bash
+npm run typecheck
+npm run test
 npm run build
 ```
 
+## Environment
+
+Lihat `.env.example`. Variabel `VITE_*` selalu terbaca oleh browser dan tidak boleh berisi credential, token, password, broker secret, atau database secret.
+
+Live mode harus menampilkan **LIVE SYSTEM NOT CONFIGURED** ketika backend belum tersedia dan tidak boleh otomatis mengganti data live dengan simulasi.
+
 ## Deployment
 
-Setiap perubahan yang masuk ke branch `main` akan dibangun dan diterbitkan otomatis melalui workflow GitHub Pages di `.github/workflows/deploy-pages.yml`.
+Push ke `main` menjalankan test, production build, dan deployment GitHub Pages melalui `.github/workflows/deploy-pages.yml`.
 
-Website: <https://dhefaseptiana.github.io/pringgasurya/>
+- Repository: <https://github.com/dhefaseptiana/pringgasurya>
+- Website: <https://dhefaseptiana.github.io/pringgasurya/>
 
-## Catatan keselamatan
+## Batas fase
 
-- Sensor 4–20 mA tidak dihubungkan langsung ke pin ESP32; gunakan ADC industri terisolasi.
-- Gunakan enclosure minimal IP65, grounding, SPD, MCB, dan pemisahan kabel daya dengan kabel sinyal.
-- Emergency stop, overload, dry-run, dan float switch harus tetap bekerja tanpa internet.
-- Spesifikasi pompa, sensor, panel surya, pipa, dan tandon harus disesuaikan kembali setelah survei debit, total head, kualitas air, dan kebutuhan tanaman.
+Versi ini menyelesaikan frontend dalam Simulation Mode. Historical database, API/SSE, autentikasi, command acknowledgment, audit log, dan koneksi IoT berada pada fase selanjutnya.
