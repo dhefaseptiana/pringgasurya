@@ -16,7 +16,7 @@ PRINGGASURYA adalah prototipe platform **solar-first, grid-assisted smart irriga
 
 ## Modul antarmuka
 
-- **Home:** narasi masalah, solusi, cara kerja, dampak, dan skalabilitas.
+- **Home:** narasi editorial dan project journey lima chapter yang menghubungkan Sistem, Operasi, Irigasi, Dampak, dan Kelayakan.
 - **Operate:** Live Monitoring, Water, Energy, Smart Irrigation, Water Quality, dan Alerts.
 - **Analyze:** Analytics, Environmental Impact, dan Economic Analysis.
 - **Plan:** System Sizing, Scalability, dan Deployment.
@@ -36,6 +36,10 @@ Routing memakai `HashRouter` agar setiap rute aman dibuka pada GitHub Pages, mis
 - **Economic–Environmental Calculator:** memperbarui CAPEX, biaya tahunan, biaya air, payback, emisi, evaporasi, suhu mikro, dan land equivalent ratio secara reaktif.
 
 Seluruh kalkulasi interaktif berbagi satu `SimulationInputs` dan simulation engine. Perubahan pada satu halaman memengaruhi keluaran halaman lainnya selama sesi browser yang sama.
+
+## Visual direction
+
+Versi 2.2 memakai art direction **clean, technical, agricultural, and grounded**. Komposisi tidak lagi bergantung pada grid card seragam. Setiap chapter memiliki focal point tersendiri, sedangkan `ProjectJourney` pada Home dan `PageContinuation` di akhir chapter menjaga seluruh pengalaman terbaca sebagai satu alur proyek.
 
 ## Arsitektur frontend
 

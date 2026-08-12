@@ -3,6 +3,7 @@ import { DataBadge } from "../components/common/DataBadge";
 import { MetricCard } from "../components/common/MetricCard";
 import { PageHeader } from "../components/common/PageHeader";
 import { SectionHeading } from "../components/common/SectionHeading";
+import { PageContinuation } from "../components/navigation/ProjectJourney";
 import { useSystem } from "../contexts/SystemContext";
 import { calculateAgrivoltaic } from "../domain/calculations";
 import type { AgrivoltaicLayout } from "../domain/types";
@@ -22,7 +23,7 @@ export function EnvironmentalImpactPage() {
   const agri = calculateAgrivoltaic(inputs);
   const maxEmission = Math.max(data.environment.dieselEmissionKgYear, data.environment.gridEmissionKgYear, data.environment.hybridEmissionKgYear);
   return (
-    <>
+    <div className="project-page project-page--impact">
       <PageHeader eyebrow="ANALYZE · ENVIRONMENTAL IMPACT" title="Uji trade-off agrivoltaik secara langsung" description="Pilih lokasi panel dan tingkat naungan untuk membandingkan suhu mikro, evaporasi, cahaya tanaman, pemanfaatan lahan, dan emisi energi." source="PROJECTED" />
       <section className="control-warning"><Leaf /><div><b>PROJECTED IMPACT</b><p>Angka merupakan model skenario untuk eksplorasi. Dampak hasil tanaman dan evaporasi harus divalidasi melalui petak kontrol satu musim.</p></div><DataBadge source="PROJECTED" /></section>
       <section className="agrivoltaic-lab">
@@ -31,7 +32,8 @@ export function EnvironmentalImpactPage() {
       </section>
       <section className="metric-grid"><MetricCard icon={ThermometerSun} label="Pendinginan mikro" value={agri.coolingC} unit="°C" meta="Proyeksi terhadap open field" tone="solar" /><MetricCard icon={Droplets} label="Reduksi evaporasi" value={agri.evaporationReductionPercent} unit="%" meta="Model naungan awal" tone="water" /><MetricCard icon={Trees} label="Cahaya ke tanaman" value={agri.cropLightPercent} unit="%" meta="Relatif terhadap open field" tone="agriculture" /><MetricCard icon={LandPlot} label="Land equivalent ratio" value={agri.landEquivalentRatio} meta="Pangan + energi per lahan" /></section>
       <section className="two-column-layout"><article className="panel-block"><SectionHeading kicker="ANNUAL EMISSION MODEL" title="Perbandingan emisi energi" /><div className="emission-bars"><EmissionBar label="Diesel" value={data.environment.dieselEmissionKgYear} max={maxEmission} tone="diesel" /><EmissionBar label="PLN penuh" value={data.environment.gridEmissionKgYear} max={maxEmission} tone="grid" /><EmissionBar label="PRINGGASURYA" value={data.environment.hybridEmissionKgYear} max={maxEmission} tone="hybrid" /></div></article><article className="panel-block impact-result"><SectionHeading kicker="AVOIDED EMISSION" title="Dampak skenario aktif" /><Leaf /><b>{Math.round(data.environment.avoidedEmissionKgYear).toLocaleString("id-ID")} kg CO₂e/tahun</b><p>Dihindari terhadap diesel berdasarkan faktor model. Nilai final menunggu faktor emisi dan jam operasi tervalidasi.</p></article></section>
-    </>
+      <PageContinuation current="impact" />
+    </div>
   );
 }
 

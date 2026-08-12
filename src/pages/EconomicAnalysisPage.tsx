@@ -2,6 +2,7 @@ import { Banknote, BatteryCharging, Droplets, Fuel, PlugZap, Sun } from "lucide-
 import { DataBadge } from "../components/common/DataBadge";
 import { PageHeader } from "../components/common/PageHeader";
 import { SectionHeading } from "../components/common/SectionHeading";
+import { PageContinuation } from "../components/navigation/ProjectJourney";
 import { useSystem } from "../contexts/SystemContext";
 import { useTelemetry } from "../hooks/useTelemetry";
 
@@ -19,7 +20,7 @@ export function EconomicAnalysisPage() {
   ];
   const maxCost = Math.max(...alternatives.map((item) => item.cost));
   return (
-    <>
+    <div className="project-page project-page--feasibility">
       <PageHeader eyebrow="ANALYZE · ECONOMIC ANALYSIS" title="Ubah asumsi dan lihat biaya berpindah" description="Kalkulator membandingkan diesel, PLN, PLTS dengan baterai besar, dan PRINGGASURYA berbasis tandon untuk skenario aktif." source="PROJECTED" />
       <section className="economic-lab">
         <div className="economic-inputs"><div className="economic-inputs__heading"><DataBadge source="PROJECTED" /><h2>Feasibility calculator</h2><p>Geser asumsi desain. Nilai pada seluruh aplikasi akan diperbarui.</p></div><div className="economic-control-grid"><Range label="Luas lahan" value={inputs.landAreaHa} min={0.5} max={20} step={0.5} unit="ha" onChange={(v) => updateInput("landAreaHa", v)} /><Range label="Total head" value={inputs.totalHeadM} min={8} max={60} step={1} unit="m" onChange={(v) => updateInput("totalHeadM", v)} /><Range label="Kapasitas PLTS" value={inputs.pvCapacityKw} min={1} max={45} step={0.5} unit="kWp" onChange={(v) => updateInput("pvCapacityKw", v)} /><Range label="Kapasitas tandon" value={inputs.tankCapacityM3} min={5} max={300} step={5} unit="m³" onChange={(v) => updateInput("tankCapacityM3", v)} /><Range label="Harga diesel" value={inputs.dieselPriceIdrL} min={7000} max={18000} step={500} unit="Rp/L" onChange={(v) => updateInput("dieselPriceIdrL", v)} /><Range label="Tarif PLN" value={inputs.gridTariffIdrKwh} min={1000} max={2500} step={25} unit="Rp/kWh" onChange={(v) => updateInput("gridTariffIdrKwh", v)} /></div></div>
@@ -27,7 +28,8 @@ export function EconomicAnalysisPage() {
       </section>
       <section className="panel-block"><SectionHeading kicker="ANNUAL COST COMPARISON" title="Biaya tahunan ekuivalen" description="Semakin pendek bar, semakin rendah biaya pada asumsi aktif." /><div className="cost-comparison">{alternatives.map(({ icon: Icon, label, cost, detail, tone }) => <article key={label} className={`cost-row cost-row--${tone}`}><Icon /><div><span>{label}<small>{detail}</small></span><div className="cost-track"><i style={{ width: `${cost / maxCost * 100}%` }} /></div></div><b>{idr(cost)}</b></article>)}</div></section>
       <section className="economic-summary"><article><span>Penghematan vs diesel</span><b>{idr(Math.max(0, data.economics.dieselAnnualCostIdr - data.economics.hybridAnnualCostIdr))}/tahun</b></article><article><span>Solar fraction</span><b>{data.energy.solarFractionPercent}%</b></article><article><span>Emisi terhindari</span><b>{Math.round(data.environment.avoidedEmissionKgYear).toLocaleString("id-ID")} kg CO₂e</b></article></section>
-    </>
+      <PageContinuation current="feasibility" />
+    </div>
   );
 }
 

@@ -4,6 +4,7 @@ import { DataBadge } from "../components/common/DataBadge";
 import { PageHeader } from "../components/common/PageHeader";
 import { SectionHeading } from "../components/common/SectionHeading";
 import { InteractiveFieldMap } from "../components/interactive/InteractiveFieldMap";
+import { PageContinuation } from "../components/navigation/ProjectJourney";
 import { useSystem } from "../contexts/SystemContext";
 import type { CropProfile } from "../domain/types";
 import { useTelemetry } from "../hooks/useTelemetry";
@@ -31,7 +32,7 @@ export function IrrigationPage() {
   };
 
   return (
-    <>
+    <div className="project-page project-page--irrigation">
       <PageHeader eyebrow="OPERATE · SMART IRRIGATION" title="Aturan berbeda untuk kebutuhan tanaman yang berbeda" description="Padi menggunakan muka air petak sebagai parameter utama. Hortikultura dan palawija menggunakan kelembapan tanah yang dikalibrasi terhadap jenis tanah dan zona akar." />
       <section className="control-warning"><ShieldAlert /><div><b>SIMULATION-ONLY CONTROL</b><p>Tombol di halaman ini hanya menulis command log lokal. Tidak ada perintah yang dikirim ke pompa, katup, MQTT, atau backend.</p></div><DataBadge source="SIMULATION" /></section>
       <section className="crop-lab"><div className="crop-profile-tabs" aria-label="Pilih profil tanaman">{(["Padi", "Hortikultura", "Palawija"] as CropProfile[]).map((item) => <button key={item} className={crop === item ? "active" : ""} onClick={() => setCrop(item)}><Sprout /><span>{item}<small>{item === "Padi" ? "Level air + AWD" : "Soil moisture + ET"}</small></span></button>)}</div><div className="crop-lab__settings"><label><span>Fase tumbuh</span><select value={growthStage} onChange={(event) => setGrowthStage(event.target.value)}><option>Awal</option><option>Vegetatif</option><option>Generatif</option><option>Pematangan</option></select></label><label className="range-control"><span>Kebutuhan air<b>{inputs.irrigationDemandPercent}%</b></span><input aria-label="Kebutuhan air tanaman" type="range" min="20" max="100" step="2" value={inputs.irrigationDemandPercent} onChange={(event) => updateInput("irrigationDemandPercent", Number(event.target.value))} /><i style={{ width: `${inputs.irrigationDemandPercent}%` }} /></label><div><span>Keputusan utama</span><b>{crop === "Padi" ? "Muka air + AWD" : "Soil moisture + ET"}</b><small>{growthStage} · ambang lokal {crop === "Padi" ? "3–5 cm (skenario)" : "DATA_REQUIRED"}</small></div></div></section>
@@ -43,6 +44,7 @@ export function IrrigationPage() {
       <section className="panel-block"><SectionHeading kicker="IRRIGATION ZONES" title="Permintaan dan status zona" /><div className="zone-list">{data.zones.map((zone) => <article key={zone.id} className={zone.valveOpen ? "zone-active" : ""}><div><span>{zone.id}</span><b>{zone.crop}</b></div><div className="demand-meter"><i style={{ width: `${zone.demandPercent}%` }} /></div><p>{zone.demandPercent}% demand</p><strong>{zone.valveOpen ? "VALVE OPEN" : zone.status.toUpperCase()}</strong></article>)}</div></section>
       <section className="panel-block"><SectionHeading kicker="LOCAL COMMAND LOG" title="Jejak perintah sesi ini" description="Log hilang ketika halaman dimuat ulang karena belum menggunakan backend." />{commandLog.length === 0 ? <div className="empty-log"><Clock3 /><p>Belum ada perintah simulasi pada sesi ini.</p></div> : <div className="command-log">{commandLog.map((entry, index) => <div key={`${entry.time}-${index}`}><CheckCircle2 /><time>{entry.time}</time><p>{entry.command}</p><DataBadge source="SIMULATION" compact /></div>)}</div>}</section>
       {pendingCommand && <div className="modal-backdrop" role="presentation" onMouseDown={() => setPendingCommand(null)}><div className="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title" onMouseDown={(event) => event.stopPropagation()}><DataBadge source="SIMULATION" /><h2 id="confirm-title">Konfirmasi perintah prototipe</h2><p>{pendingCommand.text}</p><div className="modal-note"><ShieldAlert /><span>Perintah ini hanya memperbarui simulation engine pada browser dan tidak mengendalikan perangkat.</span></div><div className="button-row"><button className="button button--primary" onClick={confirmCommand}>Konfirmasi simulasi</button><button className="button button--secondary" onClick={() => setPendingCommand(null)}>Batal</button></div></div></div>}
-    </>
+      <PageContinuation current="irrigation" />
+    </div>
   );
 }

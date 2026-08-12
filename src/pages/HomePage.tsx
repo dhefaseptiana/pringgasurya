@@ -1,87 +1,89 @@
-import { ArrowRight, BarChart3, CloudSun, Droplets, Gauge, Leaf, PlugZap, Sprout, Sun, Waves } from "lucide-react";
+import { ArrowDown, ArrowRight, CloudSun, Droplets, Gauge, Leaf, PlugZap, Sprout, Sun, Waves } from "lucide-react";
 import { Link } from "react-router-dom";
 import { DataBadge } from "../components/common/DataBadge";
-import { SectionHeading } from "../components/common/SectionHeading";
+import { ProjectJourney } from "../components/navigation/ProjectJourney";
 
-const challengeItems = [
-  { icon: Droplets, title: "Air belum selalu tersedia", body: "Kebutuhan air tanaman berubah menurut musim, fase tumbuh, dan kondisi sumber." },
-  { icon: Waves, title: "Kualitas air perlu dipantau", body: "pH, EC, dan kekeruhan membantu memberi peringatan awal sebelum air didistribusikan." },
-  { icon: PlugZap, title: "Energi pompa perlu andal", body: "Ketergantungan pada satu sumber energi dapat mengganggu jadwal irigasi dan biaya operasi." },
-];
-
-const capabilities = [
-  { icon: Sun, title: "Energy", body: "PLTS sebagai sumber utama siang hari; PLN siap membantu ketika dibutuhkan.", tone: "solar" },
-  { icon: Droplets, title: "Water", body: "Pompa mengisi tandon ketika energi tersedia. Air menjadi buffer operasional.", tone: "water" },
-  { icon: Sprout, title: "Agriculture", body: "Logika padi berbasis muka air; hortikultura dan palawija berbasis kelembapan tanah.", tone: "crop" },
-  { icon: BarChart3, title: "Decision support", body: "Dashboard menyatukan status, peringatan, tren, dan asumsi analisis.", tone: "engineering" },
+const challenges = [
+  { icon: Droplets, number: "01", title: "Air", body: "Ketersediaan air berubah menurut musim, fase tumbuh, dan kondisi sumber." },
+  { icon: Waves, number: "02", title: "Kualitas", body: "pH, EC, dan kekeruhan perlu terbaca sebelum air didistribusikan." },
+  { icon: PlugZap, number: "03", title: "Energi", body: "Pompa membutuhkan sumber daya yang andal tanpa bergantung pada diesel." },
 ];
 
 export function HomePage() {
   return (
-    <div className="home-page">
-      <section className="home-hero">
+    <div className="home-page home-page--editorial">
+      <section className="home-hero home-hero--editorial">
         <div className="home-hero__copy">
-          <div className="eyebrow-row"><span>PRINGGARATA PILOT SYSTEM</span><DataBadge source="SIMULATION" /></div>
-          <h1>Menjaga air, energi, dan pangan dalam satu sistem yang tangguh.</h1>
-          <p>PRINGGASURYA adalah konsep <b>solar-first, grid-assisted smart irrigation</b> untuk Kecamatan Pringgarata—mengubah energi matahari menjadi persediaan air yang dapat digunakan ketika tanaman membutuhkannya.</p>
-          <div className="button-row"><Link className="button button--primary" to="/system-overview">Jelajahi sistem <ArrowRight /></Link><Link className="button button--secondary" to="/operate/live">Buka simulasi operasi</Link></div>
-          <p className="prototype-note"><Gauge /> Prototipe digital untuk analisis gagasan esai. Tidak terhubung ke pompa atau sensor nyata.</p>
+          <div className="eyebrow-row"><span>PRINGGARATA · LOMBOK TENGAH</span><DataBadge source="SIMULATION" /></div>
+          <h1>Air untuk tanaman.<br /><em>Energi dari matahari.</em></h1>
+          <p>PRINGGASURYA adalah konsep <b>solar-first, grid-assisted smart irrigation</b> yang menyatukan produksi energi, penyimpanan air, dan keputusan irigasi dalam satu sistem.</p>
+          <div className="home-hero__actions">
+            <Link className="button button--primary" to="/system-overview">Mulai perjalanan <ArrowRight /></Link>
+            <a className="home-scroll-link" href="#project-journey">Lihat lima chapter <ArrowDown /></a>
+          </div>
+          <p className="prototype-note"><Gauge /> Prototipe digital untuk menguji gagasan esai—bukan fasilitas operasional.</p>
         </div>
-        <div className="home-hero__visual" aria-label="Hubungan energi, air, dan pertanian">
-          <div className="hero-orbit hero-orbit--solar"><Sun /><span>PLTS</span><b>Energi utama</b></div>
-          <div className="hero-orbit hero-orbit--water"><Droplets /><span>Tandon</span><b>Simpan air</b></div>
-          <div className="hero-orbit hero-orbit--crop"><Sprout /><span>Lahan</span><b>Irigasi tepat</b></div>
-          <div className="hero-core"><CloudSun /><b>PRINGGA<br />SURYA</b></div>
-          <p>Instead of storing electricity,<br /><b>we store water.</b></p>
-        </div>
-      </section>
 
-      <section className="home-section">
-        <SectionHeading kicker="01 · PRINGGARATA CHALLENGE" title="Tiga kebutuhan yang tidak dapat dipisahkan" description="Masalah irigasi bukan hanya tentang pompa. Air, kualitas sumber, dan pasokan energi memengaruhi keputusan petani secara bersamaan." />
-        <div className="challenge-grid">{challengeItems.map(({ icon: Icon, title, body }, index) => <article key={title}><span>0{index + 1}</span><Icon /><h3>{title}</h3><p>{body}</p></article>)}</div>
-      </section>
-
-      <section className="solution-section">
-        <div>
-          <span className="section-kicker">02 · THE SOLUTION</span>
-          <h2>Menggunakan matahari saat tersedia, menyimpan air untuk saat dibutuhkan.</h2>
-          <p>Panel surya menyuplai pompa pada siang hari. Pompa memindahkan air ke tandon, sehingga sistem tidak memerlukan baterai pompa berkapasitas besar. PLN berperan sebagai cadangan untuk kebutuhan mendesak atau produksi surya yang tidak mencukupi.</p>
-          <Link className="text-link" to="/operate/energy">Lihat strategi energi <ArrowRight /></Link>
-        </div>
-        <div className="principle-stack">
-          <article><span>1</span><div><b>Solar first</b><p>Prioritaskan produksi PLTS untuk beban pompa.</p></div></article>
-          <article><span>2</span><div><b>Store water</b><p>Gunakan tandon sebagai buffer operasi dan ketahanan.</p></div></article>
-          <article><span>3</span><div><b>Grid assisted</b><p>Aktifkan bantuan PLN berdasarkan kebutuhan dan batas aman.</p></div></article>
+        <div className="home-hero__visual terrain-visual" aria-label="Siklus energi surya, penyimpanan air, dan irigasi lahan">
+          <div className="terrain-visual__sun"><Sun /><span>922 W/m²</span></div>
+          <div className="terrain-visual__panels"><i /><i /><i /></div>
+          <div className="terrain-visual__energy"><span>PLTS</span><b>ENERGY</b></div>
+          <div className="terrain-visual__water"><Droplets /><span>TANDON</span><b>STORE WATER</b></div>
+          <div className="terrain-visual__field"><Sprout /><span>LAHAN</span><b>IRRIGATE</b></div>
+          <div className="terrain-visual__route terrain-visual__route--energy"><i /></div>
+          <div className="terrain-visual__route terrain-visual__route--water"><i /></div>
+          <div className="terrain-visual__statement"><CloudSun /><p>Instead of storing electricity,<br /><b>we store water.</b></p></div>
+          <div className="terrain-visual__ground"><span>PRINGGARATA PILOT LANDSCAPE</span><span>08°34′ S · 116°16′ E</span></div>
         </div>
       </section>
 
-      <section className="home-section">
-        <SectionHeading kicker="03 · HOW IT WORKS" title="Dari energi menuju dampak" description="Setiap lapisan menghasilkan keputusan untuk lapisan berikutnya." />
-        <div className="impact-chain">
-          {[
-            ["Energy", "PLTS + PLN"], ["Water", "Pompa + tandon"], ["Agriculture", "Sensor + irigasi"], ["Economy", "Biaya operasi"], ["Environment", "Air + emisi"],
-          ].map(([title, meta], index) => <div key={title}><span>{index + 1}</span><b>{title}</b><small>{meta}</small></div>)}
+      <ProjectJourney />
+
+      <section className="home-problem">
+        <div className="home-problem__statement">
+          <span>THE LOCAL QUESTION</span>
+          <h2>Bagaimana menjaga irigasi ketika air, kualitas sumber, dan energi tidak selalu pasti?</h2>
+          <p>PRINGGASURYA memperlakukan ketiganya sebagai satu persoalan desain, bukan tiga proyek yang berdiri sendiri.</p>
+        </div>
+        <div className="home-problem__list">
+          {challenges.map(({ icon: Icon, number, title, body }) => (
+            <article key={title}><span>{number}</span><Icon /><div><h3>{title}</h3><p>{body}</p></div></article>
+          ))}
         </div>
       </section>
 
-      <section className="capability-section">
-        <SectionHeading kicker="04 · CAPABILITIES" title="Satu antarmuka, empat sudut pandang" />
-        <div className="capability-grid">{capabilities.map(({ icon: Icon, title, body, tone }) => <article className={`capability-card capability-card--${tone}`} key={title}><Icon /><h3>{title}</h3><p>{body}</p></article>)}</div>
-      </section>
-
-      <section className="impact-section">
-        <div><span className="section-kicker">05 · PROJECTED IMPACT</span><h2>Hipotesis yang harus dibuktikan melalui pilot.</h2><p>Angka berikut adalah keluaran skenario awal, bukan hasil lapangan. Nilainya perlu dihitung ulang setelah survei debit, total head, pola tanam, tarif energi, dan konfigurasi panel.</p><DataBadge source="PROJECTED" /></div>
-        <div className="impact-metrics">
-          <article><b>↓ CO₂e</b><span>Dibanding diesel atau jaringan penuh</span></article>
-          <article><b>↓ OPEX</b><span>Energi surya menekan biaya operasi</span></article>
-          <article><b>↑ Reliability</b><span>PLN menjaga layanan saat surya rendah</span></article>
-          <article><b>↑ Water control</b><span>Sensor dan tandon memperjelas keputusan</span></article>
+      <section className="operating-manifesto">
+        <div className="operating-manifesto__lead">
+          <span>THE OPERATING IDEA</span>
+          <h2>Matahari menggerakkan pompa. Tandon memisahkan waktu produksi energi dari waktu kebutuhan air.</h2>
+          <Link to="/operate/live">Jalankan skenario operasi <ArrowRight /></Link>
         </div>
+        <ol>
+          <li><span>01</span><div><b>Solar first</b><p>Gunakan produksi PLTS sebagai sumber utama beban pompa pada siang hari.</p></div></li>
+          <li><span>02</span><div><b>Store water</b><p>Simpan air sebagai buffer operasional sehingga baterai besar dapat dihindari.</p></div></li>
+          <li><span>03</span><div><b>Grid assisted</b><p>Gunakan PLN hanya ketika cadangan air atau kebutuhan tanaman menuntutnya.</p></div></li>
+        </ol>
       </section>
 
-      <section className="home-section scale-preview">
-        <SectionHeading kicker="06 · SCALABILITY" title="Mulai kecil, ukur, lalu replikasi" description="Arsitektur yang sama dapat dikonfigurasi untuk kelompok pengelola dan luasan berbeda." action={<Link className="text-link" to="/plan/scalability">Detail skala <ArrowRight /></Link>} />
-        <div className="scale-grid"><article><span>PILOT</span><b>±1 ha</b><p>Satu pompa, tandon, dan sensor esensial.</p></article><article><span>KELOMPOK</span><b>±5 ha</b><p>Beberapa zona dan dashboard pengelola.</p></article><article><span>KAWASAN</span><b>±20 ha</b><p>Jaringan terpusat dan operasi bertingkat.</p></article></div>
+      <section className="evidence-band">
+        <div><Leaf /><span>Hipotesis pilot</span><h2>Dampak harus dibuktikan, bukan sekadar diklaim.</h2></div>
+        <div className="evidence-band__metrics">
+          <article><span>ENERGY</span><b>↓ CO₂e</b><p>dibanding diesel atau jaringan penuh</p></article>
+          <article><span>ECONOMY</span><b>↓ OPEX</b><p>melalui pemanfaatan energi matahari</p></article>
+          <article><span>WATER</span><b>↑ Control</b><p>melalui sensor, tandon, dan zonasi</p></article>
+        </div>
+        <Link to="/analyze/impact">Uji asumsi dampak <ArrowRight /></Link>
+      </section>
+
+      <section className="scale-story">
+        <div><span>SCALABILITY</span><h2>Mulai dari satu hektare.<br />Ukur. Pelajari. Replikasi.</h2><p>Arsitektur dasarnya sama; kapasitas pompa, panel, tandon, jumlah sensor, dan model pengelolaannya yang berubah.</p></div>
+        <div className="scale-story__rail">
+          <article><span>01</span><b>±1 ha</b><p>Pilot petani</p></article>
+          <i />
+          <article><span>02</span><b>±5 ha</b><p>Kelompok tani</p></article>
+          <i />
+          <article><span>03</span><b>±20 ha</b><p>Gapoktan / BUMDes</p></article>
+        </div>
       </section>
     </div>
   );
