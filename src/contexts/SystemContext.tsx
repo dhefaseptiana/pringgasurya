@@ -50,8 +50,8 @@ export function SystemProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!isPlaying) return;
     const timer = window.setInterval(() => {
-      setInputs((current) => ({ ...current, clockHour: (current.clockHour + 0.05 * speed) % 24 }));
-    }, 600);
+      setInputs((current) => ({ ...current, clockHour: (current.clockHour + 0.1 * speed) % 24 }));
+    }, 1_200);
     return () => window.clearInterval(timer);
   }, [isPlaying, speed]);
 
