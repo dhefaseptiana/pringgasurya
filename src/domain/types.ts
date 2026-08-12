@@ -12,6 +12,39 @@ export type ScenarioId =
 
 export type CropProfile = "Padi" | "Hortikultura" | "Palawija";
 export type HealthStatus = "normal" | "warning" | "critical" | "offline";
+export type WeatherPreset = "clear" | "cloudy" | "rain" | "variable";
+export type AgrivoltaicLayout = "open-field" | "reservoir" | "canal" | "partial-shade";
+
+export interface SimulationInputs {
+  clockHour: number;
+  weather: WeatherPreset;
+  irradianceScalePercent: number;
+  gridAvailable: boolean;
+  tankStartPercent: number;
+  landAreaHa: number;
+  totalHeadM: number;
+  irrigationDemandPercent: number;
+  pvCapacityKw: number;
+  tankCapacityM3: number;
+  shadePercent: number;
+  agrivoltaicLayout: AgrivoltaicLayout;
+  dieselPriceIdrL: number;
+  gridTariffIdrKwh: number;
+  activeZoneIds: string[];
+}
+
+export interface ScenarioRecord {
+  id: string;
+  name: string;
+  createdAt: string;
+  inputs: SimulationInputs;
+  outputs: {
+    solarFractionPercent: number;
+    tankLevelPercent: number;
+    annualCostIdr: number;
+    annualEmissionsKg: number;
+  };
+}
 
 export interface HistoryPoint {
   time: string;
@@ -60,6 +93,24 @@ export interface TelemetrySnapshot {
     ambientTemperatureC: number;
     underPanelTemperatureC: number;
     rainTodayMm: number;
+  };
+  economics: {
+    hybridCapexIdr: number;
+    dieselAnnualCostIdr: number;
+    gridAnnualCostIdr: number;
+    batteryAnnualizedCostIdr: number;
+    hybridAnnualCostIdr: number;
+    waterCostIdrM3: number;
+    simplePaybackYears: number;
+  };
+  environment: {
+    dieselEmissionKgYear: number;
+    gridEmissionKgYear: number;
+    hybridEmissionKgYear: number;
+    avoidedEmissionKgYear: number;
+    evaporationReductionPercent: number;
+    microclimateCoolingC: number;
+    landEquivalentRatio: number;
   };
   zones: Array<{
     id: string;

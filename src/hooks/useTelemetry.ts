@@ -3,10 +3,10 @@ import { useSystem } from "../contexts/SystemContext";
 import { telemetryService } from "../services";
 
 export function useTelemetry() {
-  const { scenario } = useSystem();
+  const { scenario, inputs } = useSystem();
   return useQuery({
-    queryKey: ["telemetry", scenario],
-    queryFn: () => telemetryService.getSnapshot(scenario),
+    queryKey: ["telemetry", scenario, inputs],
+    queryFn: () => telemetryService.getSnapshot(scenario, inputs),
     refetchInterval: 4_000,
     staleTime: 2_000,
   });

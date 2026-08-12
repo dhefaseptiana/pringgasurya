@@ -11,6 +11,8 @@ const WaterManagementPage = lazy(() => import("../pages/WaterManagementPage").th
 const EnergyManagementPage = lazy(() => import("../pages/EnergyManagementPage").then((module) => ({ default: module.EnergyManagementPage })));
 const IrrigationPage = lazy(() => import("../pages/IrrigationPage").then((module) => ({ default: module.IrrigationPage })));
 const AnalyticsPage = lazy(() => import("../pages/AnalyticsPage").then((module) => ({ default: module.AnalyticsPage })));
+const EnvironmentalImpactPage = lazy(() => import("../pages/EnvironmentalImpactPage").then((module) => ({ default: module.EnvironmentalImpactPage })));
+const EconomicAnalysisPage = lazy(() => import("../pages/EconomicAnalysisPage").then((module) => ({ default: module.EconomicAnalysisPage })));
 const InfoPage = lazy(() => import("../pages/InfoPage").then((module) => ({ default: module.InfoPage })));
 const NotFoundPage = lazy(() => import("../pages/NotFoundPage").then((module) => ({ default: module.NotFoundPage })));
 
@@ -33,8 +35,8 @@ export default function App() {
                 <Route path="analyze/analytics" element={<AnalyticsPage />} />
                 <Route path="operate/water-quality" element={<InfoPage page="water-quality" />} />
                 <Route path="operate/alerts" element={<InfoPage page="alerts" />} />
-                <Route path="analyze/impact" element={<InfoPage page="impact" />} />
-                <Route path="analyze/economics" element={<InfoPage page="economics" />} />
+                <Route path="analyze/impact" element={<EnvironmentalImpactPage />} />
+                <Route path="analyze/economics" element={<EconomicAnalysisPage />} />
                 <Route path="plan/sizing" element={<InfoPage page="sizing" />} />
                 <Route path="plan/scalability" element={<InfoPage page="scalability" />} />
                 <Route path="plan/deployment" element={<InfoPage page="deployment" />} />

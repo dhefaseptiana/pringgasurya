@@ -1,5 +1,5 @@
-import type { ScenarioId, TelemetrySnapshot } from "../../domain/types";
+import type { ScenarioId, SimulationInputs, TelemetrySnapshot } from "../../domain/types";
 
 export interface TelemetryService {
-  getSnapshot(scenario: ScenarioId): Promise<TelemetrySnapshot>;
+  getSnapshot(scenario: ScenarioId, inputs: SimulationInputs): Promise<TelemetrySnapshot>;
 }

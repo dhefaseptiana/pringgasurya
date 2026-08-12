@@ -25,6 +25,18 @@ PRINGGASURYA adalah prototipe platform **solar-first, grid-assisted smart irriga
 
 Routing memakai `HashRouter` agar setiap rute aman dibuka pada GitHub Pages, misalnya `/#/operate/live`.
 
+## Fitur interaktif
+
+- **Interactive System Explorer:** komponen dapat diklik; garis energi dan air bergerak mengikuti daya serta debit skenario aktif.
+- **Scenario Control Center:** Play/Pause, jam simulasi, kecepatan 1×/5×/20×, cuaca, irradiance, PLN, level tandon, luas lahan, total head, dan kebutuhan irigasi.
+- **Scenario comparison:** menyimpan maksimal tiga konfigurasi untuk membandingkan solar fraction, tandon, biaya, dan emisi.
+- **Interactive Field Map:** memilih zona, membaca parameter tanaman, dan mengubah katup simulasi melalui dialog konfirmasi.
+- **Crop Configuration Lab:** profil Padi, Hortikultura, dan Palawija dengan fase tumbuh serta kebutuhan air.
+- **Agrivoltaic Comparison Lab:** membandingkan open field, panel di tandon, panel di saluran, dan naungan parsial.
+- **Economic–Environmental Calculator:** memperbarui CAPEX, biaya tahunan, biaya air, payback, emisi, evaporasi, suhu mikro, dan land equivalent ratio secara reaktif.
+
+Seluruh kalkulasi interaktif berbagi satu `SimulationInputs` dan simulation engine. Perubahan pada satu halaman memengaruhi keluaran halaman lainnya selama sesi browser yang sama.
+
 ## Arsitektur frontend
 
 ```text
