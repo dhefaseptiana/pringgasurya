@@ -23,8 +23,10 @@
   --soil-soft: #eee0d3;
 }
 
+html, body, #root { max-width: 100%; overflow-x: clip; }
 body { background: #f1eee5; }
 .app-shell { background: #f1eee5; }
+.app-shell, .app-column, .page-content, .project-page { min-width: 0; max-width: 100%; }
 .sidebar { width: 232px; background: #172320; border-right-color: #2e3a36; }
 .app-column { margin-left: 232px; }
 .brand-block { min-height: 92px; padding: 22px 18px; border-bottom-color: rgba(255,255,255,.1); }
@@ -185,7 +187,8 @@ body { background: #f1eee5; }
 
 /* Distinct focal points per project chapter. */
 .project-page--system .panel-block:has(.explorer-layout) { margin: 0 -42px; padding: 58px 42px; background: #e9e5db; border: 0; }
-.interactive-explorer { min-height: 430px; background-color: #f2efe7; background-image: linear-gradient(rgba(53,92,99,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(53,92,99,.08) 1px, transparent 1px); background-size: 26px 26px; border: 0; }
+.explorer-layout, .explorer-layout > * { min-width: 0; }
+.interactive-explorer { min-height: 430px; justify-content: flex-start; background-color: #f2efe7; background-image: linear-gradient(rgba(53,92,99,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(53,92,99,.08) 1px, transparent 1px); background-size: 26px 26px; border: 0; }
 .explorer-node { background: #faf8f2; border-color: #aaa99f; box-shadow: none; }
 .explorer-node:hover { transform: translateY(-4px); box-shadow: none; }
 .explorer-detail { background: #20312d; border-top: 0; border-left: 5px solid var(--solar); }
