@@ -51,7 +51,7 @@ export function SystemProvider({ children }: { children: ReactNode }) {
     if (!isPlaying) return;
     const timer = window.setInterval(() => {
       setInputs((current) => ({ ...current, clockHour: (current.clockHour + 0.1 * speed) % 24 }));
-    }, 1_200);
+    }, 4_000);
     return () => window.clearInterval(timer);
   }, [isPlaying, speed]);
 

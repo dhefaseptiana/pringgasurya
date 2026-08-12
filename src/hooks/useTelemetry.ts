@@ -7,7 +7,6 @@ export function useTelemetry() {
   return useQuery({
     queryKey: ["telemetry", scenario, inputs],
     queryFn: () => telemetryService.getSnapshot(scenario, inputs),
-    refetchInterval: 4_000,
-    staleTime: 2_000,
+    staleTime: 10_000,
   });
 }
