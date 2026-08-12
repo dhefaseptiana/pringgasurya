@@ -43,8 +43,11 @@ describe("SimulationTelemetryService", () => {
   });
 
   it("stops grid assistance when PLN is unavailable", () => {
+    const baseline = createSimulationSnapshot("normal", defaultSimulationInputs, fixedTime);
     const snapshot = createSimulationSnapshot("reduced-pv", { ...defaultSimulationInputs, gridAvailable: false }, fixedTime);
     expect(snapshot.energy.gridPowerKw).toBe(0);
+    expect(snapshot.water.flowLps).toBe(0);
+    expect(snapshot.water.tankLevelPercent).toBeLessThan(baseline.water.tankLevelPercent);
     expect(snapshot.alerts.some((alert) => alert.id === "grid-unavailable")).toBe(true);
   });
 });

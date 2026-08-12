@@ -14,15 +14,11 @@ export function createSimulationSnapshot(scenario: ScenarioId, inputs: Simulatio
   let energySatisfied = pumpPowerKw === 0 || pvPowerKw + gridPowerKw >= pumpPowerKw * 0.98;
   let flowLps = pumpPowerKw > 0 && energySatisfied ? pumpPowerKw * 1.9 * (22 / Math.max(8, inputs.totalHeadM)) : 0;
   let pressureBar = pumpPowerKw > 0 ? inputs.totalHeadM / 10.2 : 0;
-  const fillingRate = pumpPowerKw > 0 ? Math.max(0, flowLps * 0.42 - inputs.activeZoneIds.length * inputs.irrigationDemandPercent / 85) : 0;
-  const drawRate = inputs.activeZoneIds.length * inputs.irrigationDemandPercent / 220;
-  let tankLevelPercent = inputs.tankStartPercent + (inputs.clockHour - 8) * (fillingRate - drawRate);
-  tankLevelPercent = Math.min(98, Math.max(4, tankLevelPercent));
+  let tankLevelPercent = inputs.tankStartPercent;
   let systemStatus: TelemetrySnapshot["systemStatus"] = energySatisfied ? "normal" : "warning";
   let quality: TelemetrySnapshot["quality"] = "VALID";
   const alerts: TelemetrySnapshot["alerts"] = [];
 
-  if (scenario === "low-tank") tankLevelPercent = 19;
   if (scenario === "reduced-pv") { pvPowerKw *= 0.34; gridPowerKw = inputs.gridAvailable ? Math.max(0, pumpPowerKw - pvPowerKw) : 0; }
   if (scenario === "grid-assist") gridPowerKw = inputs.gridAvailable ? Math.max(0.5, pumpPowerKw - pvPowerKw) : 0;
   if (scenario === "abnormal-flow") { flowLps *= 0.16; pressureBar *= 1.2; }
@@ -32,6 +28,12 @@ export function createSimulationSnapshot(scenario: ScenarioId, inputs: Simulatio
   energySatisfied = pumpPowerKw === 0 || pvPowerKw + gridPowerKw >= pumpPowerKw * 0.98;
   if (!energySatisfied) { flowLps = 0; pressureBar = 0; systemStatus = "warning"; }
 
+  const fillingRate = flowLps > 0 ? Math.max(0, flowLps * 0.42 - inputs.activeZoneIds.length * inputs.irrigationDemandPercent / 85) : 0;
+  const drawRate = inputs.activeZoneIds.length * inputs.irrigationDemandPercent / 220;
+  tankLevelPercent = inputs.tankStartPercent + (inputs.clockHour - 8) * (fillingRate - drawRate);
+  tankLevelPercent = Math.min(98, Math.max(4, tankLevelPercent));
+  if (scenario === "low-tank") tankLevelPercent = 19;
+
   if (tankLevelPercent < 25) { systemStatus = systemStatus === "critical" ? "critical" : "warning"; alerts.push({ id: "tank-low", level: "warning", title: "Persediaan tandon rendah", detail: "Prioritaskan pengisian saat daya surya tersedia." }); }
   if (!inputs.gridAvailable && !energySatisfied) { systemStatus = "warning"; alerts.push({ id: "grid-unavailable", level: "warning", title: "Energi tidak memenuhi beban", detail: "PLN tidak tersedia; pompa menunggu produksi surya atau pengurangan beban." }); }
   if (scenario === "reduced-pv") alerts.push({ id: "pv-low", level: "warning", title: "Produksi surya berkurang", detail: inputs.gridAvailable ? "Awan menurunkan daya; PLN membantu beban pompa." : "Produksi surya rendah dan PLN tidak tersedia." });
@@ -39,7 +41,6 @@ export function createSimulationSnapshot(scenario: ScenarioId, inputs: Simulatio
   if (scenario === "pump-fault") alerts.push({ id: "pump-fault", level: "critical", title: "Pompa utama berhenti", detail: "Interlock simulasi aktif. Inspeksi panel lapangan diperlukan." });
   if (scenario === "sensor-offline") alerts.push({ id: "sensor-offline", level: "warning", title: "Sensor EC tidak terhubung", detail: "Nilai terakhir tidak digunakan untuk keputusan otomatis." });
 
-  const totalPower = pvPowerKw + gridPowerKw;
   const solarFractionPercent = pumpPowerKw > 0 ? Math.min(100, (Math.min(pvPowerKw, pumpPowerKw) / pumpPowerKw) * 100) : 100;
   const economics = calculateEconomics(inputs, solarFractionPercent);
   const environment = calculateEnvironment(inputs, solarFractionPercent);
