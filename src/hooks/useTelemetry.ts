@@ -1,12 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 import { useSystem } from "../contexts/SystemContext";
-import { telemetryService } from "../services";
+import { createSimulationSnapshot } from "../services/simulation/SimulationTelemetryService";
 
 export function useTelemetry() {
   const { scenario, inputs } = useSystem();
-  return useQuery({
-    queryKey: ["telemetry", scenario, inputs],
-    queryFn: () => telemetryService.getSnapshot(scenario, inputs),
-    staleTime: 10_000,
-  });
+  const result = useMemo(() => ({
+    data: createSimulationSnapshot(scenario, inputs),
+    dataUpdatedAt: Date.now(),
+  }), [scenario, inputs]);
+  return { ...result, isLoading: false, isFetching: false };
 }

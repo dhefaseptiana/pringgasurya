@@ -3,6 +3,7 @@ import type { DataSource } from "../domain/types";
 import { DataBadge } from "../components/common/DataBadge";
 import { PageHeader } from "../components/common/PageHeader";
 import { SectionHeading } from "../components/common/SectionHeading";
+import { monitoringTabs, SectionTabs, systemTabs } from "../components/navigation/SectionTabs";
 
 export type InfoPageKey = "water-quality" | "alerts" | "sizing" | "scalability" | "deployment" | "study-area" | "methodology" | "references" | "settings";
 
@@ -22,8 +23,14 @@ const pageConfig: Record<InfoPageKey, InfoConfig> = {
 
 export function InfoPage({ page }: { page: InfoPageKey }) {
   const config = pageConfig[page];
+  const tabs = page === "water-quality" || page === "alerts"
+    ? monitoringTabs
+    : page === "settings"
+      ? null
+      : systemTabs;
   return (
     <>
+      {tabs && <SectionTabs label={page === "water-quality" || page === "alerts" ? "Navigasi monitoring" : "Navigasi tentang sistem"} items={tabs} />}
       <PageHeader eyebrow={config.eyebrow} title={config.title} description={config.description} source={config.source} />
       <section className="info-lead"><div><DataBadge source={config.source} /><h2>{config.sectionTitle}</h2></div><p>Modul ini sudah memiliki struktur konten dan akan memperoleh kalkulasi atau koneksi data pada fase pengembangan berikutnya.</p></section>
       <section className="info-card-grid">{config.items.map((item, index) => <article key={item.title}><span>0{index + 1}</span><h3>{item.title}</h3><p>{item.body}</p>{item.status && <small>{item.status}</small>}</article>)}</section>

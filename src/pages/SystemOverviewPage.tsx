@@ -4,6 +4,7 @@ import { SectionHeading } from "../components/common/SectionHeading";
 import { StatusBadge } from "../components/common/StatusBadge";
 import { InteractiveSystemExplorer } from "../components/interactive/InteractiveSystemExplorer";
 import { PageContinuation } from "../components/navigation/ProjectJourney";
+import { SectionTabs, systemTabs } from "../components/navigation/SectionTabs";
 import { sensorCatalog } from "../domain/sensors";
 import { useTelemetry } from "../hooks/useTelemetry";
 
@@ -20,6 +21,7 @@ export function SystemOverviewPage() {
   if (isLoading || !data) return <div className="page-loading">Menyiapkan arsitektur simulasi…</div>;
   return (
     <div className="project-page project-page--system">
+      <SectionTabs label="Navigasi tentang sistem" items={systemTabs} />
       <PageHeader eyebrow="SYSTEM OVERVIEW" title="Satu sistem dari panel hingga keputusan" description="Arsitektur PRINGGASURYA memisahkan proteksi lapangan, komunikasi, layanan data, dan antarmuka pengguna agar aman dikembangkan menuju pilot nyata." />
       <section className="status-ribbon"><div><span>Status sistem</span><StatusBadge status={data.systemStatus} /></div><div><span>Strategi energi</span><b>Solar-first, grid-assisted</b></div><div><span>Buffer operasi</span><b>Tandon air · {data.water.tankLevelPercent}%</b></div><div><span>Unit</span><b>Pilot Unit 01</b></div></section>
       <section className="panel-block"><SectionHeading kicker="INTERACTIVE SYSTEM EXPLORER" title="Klik komponen dan ikuti alirannya" description="Garis bergerak mengikuti daya dan debit pada skenario aktif. Pilih setiap komponen untuk melihat sensor, logika, dan proteksi lapangannya." /><InteractiveSystemExplorer data={data} /><div className="engineering-note"><DropletNote /></div></section>

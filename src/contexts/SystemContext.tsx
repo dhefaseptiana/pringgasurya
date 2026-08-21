@@ -1,8 +1,11 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import type { CropProfile, ScenarioId, ScenarioRecord, SimulationInputs } from "../domain/types";
+import type { ControlMode, CropProfile, IrrigationCommand, ScenarioId, ScenarioRecord, SimulationInputs } from "../domain/types";
 
 export const defaultSimulationInputs: SimulationInputs = {
-  clockHour: 11.5,
+  clockHour: 12,
+  simulationStep: 48,
+  startDate: "2026-08-21T00:00:00.000Z",
+  randomSeed: 260821,
   weather: "clear",
   irradianceScalePercent: 100,
   gridAvailable: true,
@@ -20,6 +23,8 @@ export const defaultSimulationInputs: SimulationInputs = {
 };
 
 interface SystemContextValue {
+  controlMode: ControlMode;
+  setControlMode: (mode: ControlMode) => void;
   crop: CropProfile;
   setCrop: (crop: CropProfile) => void;
   scenario: ScenarioId;
@@ -35,28 +40,43 @@ interface SystemContextValue {
   savedScenarios: ScenarioRecord[];
   saveScenario: (record: Omit<ScenarioRecord, "id" | "createdAt" | "inputs">) => void;
   clearSavedScenarios: () => void;
+  commandHistory: IrrigationCommand[];
+  recordCommand: (command: Omit<IrrigationCommand, "id" | "timestamp">) => void;
 }
 
 const SystemContext = createContext<SystemContextValue | null>(null);
 
 export function SystemProvider({ children }: { children: ReactNode }) {
+  const [controlMode, setControlMode] = useState<ControlMode>("automatic");
   const [crop, setCrop] = useState<CropProfile>("Padi");
   const [scenario, setScenario] = useState<ScenarioId>("normal");
   const [inputs, setInputs] = useState<SimulationInputs>(defaultSimulationInputs);
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState<1 | 5 | 20>(5);
   const [savedScenarios, setSavedScenarios] = useState<ScenarioRecord[]>([]);
+  const [commandHistory, setCommandHistory] = useState<IrrigationCommand[]>([]);
 
   useEffect(() => {
     if (!isPlaying) return;
     const timer = window.setInterval(() => {
-      setInputs((current) => ({ ...current, clockHour: (current.clockHour + 0.1 * speed) % 24 }));
-    }, 4_000);
+      setInputs((current) => ({
+        ...current,
+        simulationStep: current.simulationStep + speed,
+        clockHour: (current.clockHour + 0.25 * speed) % 24,
+      }));
+    }, 1_000);
     return () => window.clearInterval(timer);
   }, [isPlaying, speed]);
 
   const updateInput = <K extends keyof SimulationInputs>(key: K, value: SimulationInputs[K]) => {
-    setInputs((current) => ({ ...current, [key]: value }));
+    setInputs((current) => {
+      if (key === "clockHour") {
+        const nextHour = Number(value);
+        const currentDay = Math.floor(current.simulationStep / 96);
+        return { ...current, clockHour: nextHour, simulationStep: currentDay * 96 + Math.round(nextHour * 4) };
+      }
+      return { ...current, [key]: value };
+    });
   };
 
   const resetSimulation = () => {
@@ -64,6 +84,8 @@ export function SystemProvider({ children }: { children: ReactNode }) {
     setScenario("normal");
     setCrop("Padi");
     setIsPlaying(false);
+    setControlMode("automatic");
+    setCommandHistory([]);
   };
 
   const toggleZone = (zoneId: string) => {
@@ -85,11 +107,18 @@ export function SystemProvider({ children }: { children: ReactNode }) {
   };
 
   const clearSavedScenarios = () => setSavedScenarios([]);
+  const recordCommand = (command: Omit<IrrigationCommand, "id" | "timestamp">) => {
+    setCommandHistory((current) => [{
+      ...command,
+      id: `${Date.now()}-${current.length}`,
+      timestamp: new Date().toISOString(),
+    }, ...current].slice(0, 30));
+  };
   const value = useMemo(() => ({
-    crop, setCrop, scenario, setScenario, inputs, updateInput, resetSimulation,
+    controlMode, setControlMode, crop, setCrop, scenario, setScenario, inputs, updateInput, resetSimulation,
     isPlaying, setIsPlaying, speed, setSpeed, toggleZone, savedScenarios,
-    saveScenario, clearSavedScenarios,
-  }), [crop, scenario, inputs, isPlaying, speed, savedScenarios]);
+    saveScenario, clearSavedScenarios, commandHistory, recordCommand,
+  }), [controlMode, crop, scenario, inputs, isPlaying, speed, savedScenarios, commandHistory]);
   return <SystemContext.Provider value={value}>{children}</SystemContext.Provider>;
 }
 

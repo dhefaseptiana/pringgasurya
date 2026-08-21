@@ -10,7 +10,9 @@ describe("SimulationTelemetryService", () => {
     expect(snapshot.source).toBe("SIMULATION");
     expect(snapshot.siteId).toBe("pringgarata-pilot");
     expect(snapshot.unitId).toBe("Pilot Unit 01");
-    expect(snapshot.history).toHaveLength(13);
+    expect(snapshot.history).toHaveLength(49);
+    expect(snapshot.model.timeStepMinutes).toBe(15);
+    expect(snapshot.model.name).toBe("PRINGGASURYA Physical Rules v1");
   });
 
   it("keeps the low-tank scenario internally consistent", () => {

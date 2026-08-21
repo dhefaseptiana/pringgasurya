@@ -11,12 +11,16 @@ export type ScenarioId =
   | "pump-fault";
 
 export type CropProfile = "Padi" | "Hortikultura" | "Palawija";
+export type ControlMode = "automatic" | "manual" | "off";
 export type HealthStatus = "normal" | "warning" | "critical" | "offline";
 export type WeatherPreset = "clear" | "cloudy" | "rain" | "variable";
 export type AgrivoltaicLayout = "open-field" | "reservoir" | "canal" | "partial-shade";
 
 export interface SimulationInputs {
   clockHour: number;
+  simulationStep: number;
+  startDate: string;
+  randomSeed: number;
   weather: WeatherPreset;
   irradianceScalePercent: number;
   gridAvailable: boolean;
@@ -48,11 +52,53 @@ export interface ScenarioRecord {
 
 export interface HistoryPoint {
   time: string;
+  timestamp?: string;
   pvKw: number;
   pumpKw: number;
   gridKw: number;
   tankPercent: number;
   flowLps: number;
+  soilMoisturePercent?: number;
+  irrigationDemandPercent?: number;
+}
+
+export interface SimulationDatasetRow {
+  step: number;
+  timestamp: string;
+  scenario: ScenarioId;
+  weather: WeatherPreset;
+  irradianceWm2: number;
+  ambientTemperatureC: number;
+  humidityPercent: number;
+  rainMm: number;
+  evapotranspirationMm: number;
+  pvPowerKw: number;
+  pumpPowerKw: number;
+  gridPowerKw: number;
+  solarFractionPercent: number;
+  tankLevelPercent: number;
+  tankVolumeM3: number;
+  flowLps: number;
+  pressureBar: number;
+  ph: number;
+  ecMsCm: number;
+  turbidityNtu: number;
+  zone01Moisture: number;
+  zone02Moisture: number;
+  zone03Moisture: number;
+  zone01Demand: number;
+  zone02Demand: number;
+  zone03Demand: number;
+  activeZones: string;
+  systemStatus: HealthStatus;
+}
+
+export interface IrrigationCommand {
+  id: string;
+  timestamp: string;
+  action: "start" | "stop" | "stop-all" | "mode";
+  zoneId?: string;
+  description: string;
 }
 
 export interface TelemetrySnapshot {
@@ -93,6 +139,8 @@ export interface TelemetrySnapshot {
     ambientTemperatureC: number;
     underPanelTemperatureC: number;
     rainTodayMm: number;
+    humidityPercent: number;
+    evapotranspirationMm: number;
   };
   economics: {
     hybridCapexIdr: number;
@@ -118,6 +166,8 @@ export interface TelemetrySnapshot {
     status: "irrigating" | "ready" | "resting";
     valveOpen: boolean;
     demandPercent: number;
+    soilMoisturePercent: number;
+    fieldWaterLevelCm: number;
   }>;
   devices: Array<{
     code: string;
@@ -132,6 +182,13 @@ export interface TelemetrySnapshot {
     detail: string;
   }>;
   history: HistoryPoint[];
+  model: {
+    name: "PRINGGASURYA Physical Rules v1";
+    timeStepMinutes: 15;
+    randomSeed: number;
+    simulationStep: number;
+    assumptions: string[];
+  };
 }
 
 export interface SensorDefinition {

@@ -4,6 +4,7 @@ import { MetricCard } from "../components/common/MetricCard";
 import { PageHeader } from "../components/common/PageHeader";
 import { SectionHeading } from "../components/common/SectionHeading";
 import { PageContinuation } from "../components/navigation/ProjectJourney";
+import { analysisTabs, SectionTabs } from "../components/navigation/SectionTabs";
 import { useSystem } from "../contexts/SystemContext";
 import { calculateAgrivoltaic } from "../domain/calculations";
 import type { AgrivoltaicLayout } from "../domain/types";
@@ -24,6 +25,7 @@ export function EnvironmentalImpactPage() {
   const maxEmission = Math.max(data.environment.dieselEmissionKgYear, data.environment.gridEmissionKgYear, data.environment.hybridEmissionKgYear);
   return (
     <div className="project-page project-page--impact">
+      <SectionTabs label="Navigasi analisis" items={analysisTabs} />
       <PageHeader eyebrow="ANALYZE · ENVIRONMENTAL IMPACT" title="Uji trade-off agrivoltaik secara langsung" description="Pilih lokasi panel dan tingkat naungan untuk membandingkan suhu mikro, evaporasi, cahaya tanaman, pemanfaatan lahan, dan emisi energi." source="PROJECTED" />
       <section className="control-warning"><Leaf /><div><b>PROJECTED IMPACT</b><p>Angka merupakan model skenario untuk eksplorasi. Dampak hasil tanaman dan evaporasi harus divalidasi melalui petak kontrol satu musim.</p></div><DataBadge source="PROJECTED" /></section>
       <section className="agrivoltaic-lab">

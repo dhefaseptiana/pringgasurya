@@ -5,11 +5,16 @@ import { SystemProvider } from "../contexts/SystemContext";
 import { AppShell } from "../layouts/AppShell";
 
 const HomePage = lazy(() => import("../pages/HomePage").then((module) => ({ default: module.HomePage })));
+const LoginPage = lazy(() => import("../pages/LoginPage").then((module) => ({ default: module.LoginPage })));
 const SystemOverviewPage = lazy(() => import("../pages/SystemOverviewPage").then((module) => ({ default: module.SystemOverviewPage })));
 const LiveMonitoringPage = lazy(() => import("../pages/LiveMonitoringPage").then((module) => ({ default: module.LiveMonitoringPage })));
 const WaterManagementPage = lazy(() => import("../pages/WaterManagementPage").then((module) => ({ default: module.WaterManagementPage })));
 const EnergyManagementPage = lazy(() => import("../pages/EnergyManagementPage").then((module) => ({ default: module.EnergyManagementPage })));
 const IrrigationPage = lazy(() => import("../pages/IrrigationPage").then((module) => ({ default: module.IrrigationPage })));
+const SimulationPage = lazy(() => import("../pages/SimulationPage").then((module) => ({ default: module.SimulationPage })));
+const WaterQualityPage = lazy(() => import("../pages/WaterQualityPage").then((module) => ({ default: module.WaterQualityPage })));
+const AlertsPage = lazy(() => import("../pages/AlertsPage").then((module) => ({ default: module.AlertsPage })));
+const ReferencesPage = lazy(() => import("../pages/ReferencesPage").then((module) => ({ default: module.ReferencesPage })));
 const AnalyticsPage = lazy(() => import("../pages/AnalyticsPage").then((module) => ({ default: module.AnalyticsPage })));
 const EnvironmentalImpactPage = lazy(() => import("../pages/EnvironmentalImpactPage").then((module) => ({ default: module.EnvironmentalImpactPage })));
 const EconomicAnalysisPage = lazy(() => import("../pages/EconomicAnalysisPage").then((module) => ({ default: module.EconomicAnalysisPage })));
@@ -25,16 +30,18 @@ export default function App() {
         <HashRouter>
           <Suspense fallback={<div className="page-loading">Memuat modul PRINGGASURYA…</div>}>
             <Routes>
+              <Route index element={<HomePage />} />
+              <Route path="login" element={<LoginPage />} />
               <Route element={<AppShell />}>
-                <Route index element={<HomePage />} />
                 <Route path="system-overview" element={<SystemOverviewPage />} />
                 <Route path="operate/live" element={<LiveMonitoringPage />} />
                 <Route path="operate/water" element={<WaterManagementPage />} />
                 <Route path="operate/energy" element={<EnergyManagementPage />} />
                 <Route path="operate/irrigation" element={<IrrigationPage />} />
+                <Route path="simulation" element={<SimulationPage />} />
                 <Route path="analyze/analytics" element={<AnalyticsPage />} />
-                <Route path="operate/water-quality" element={<InfoPage page="water-quality" />} />
-                <Route path="operate/alerts" element={<InfoPage page="alerts" />} />
+                <Route path="operate/water-quality" element={<WaterQualityPage />} />
+                <Route path="operate/alerts" element={<AlertsPage />} />
                 <Route path="analyze/impact" element={<EnvironmentalImpactPage />} />
                 <Route path="analyze/economics" element={<EconomicAnalysisPage />} />
                 <Route path="plan/sizing" element={<InfoPage page="sizing" />} />
@@ -42,7 +49,7 @@ export default function App() {
                 <Route path="plan/deployment" element={<InfoPage page="deployment" />} />
                 <Route path="research/study-area" element={<InfoPage page="study-area" />} />
                 <Route path="research/methodology" element={<InfoPage page="methodology" />} />
-                <Route path="research/references" element={<InfoPage page="references" />} />
+                <Route path="research/references" element={<ReferencesPage />} />
                 <Route path="settings" element={<InfoPage page="settings" />} />
                 <Route path="404" element={<NotFoundPage />} />
                 <Route path="*" element={<Navigate to="/404" replace />} />

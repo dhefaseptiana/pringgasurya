@@ -14,21 +14,22 @@ PRINGGASURYA adalah prototipe platform **solar-first, grid-assisted smart irriga
 
 **Instead of storing electricity, we store water.**
 
-## Modul antarmuka
+## Arsitektur pengalaman
 
-- **Home:** narasi editorial dan project journey lima chapter yang menghubungkan Sistem, Operasi, Irigasi, Dampak, dan Kelayakan.
-- **Operate:** Live Monitoring, Water, Energy, Smart Irrigation, Water Quality, dan Alerts.
-- **Analyze:** Analytics, Environmental Impact, dan Economic Analysis.
-- **Plan:** System Sizing, Scalability, dan Deployment.
-- **Research:** Study Area, Methodology, dan References.
-- **Settings:** kesiapan environment dan batas integrasi.
+- **Landing publik:** pengantar agrivoltaik, cara kerja, dampak, pilot Pringgarata, serta jalur masuk demo/operator.
+- **Monitoring:** status utama, perhatian aktif, energi, tandon, aliran, kualitas air, dan perangkat.
+- **Kontrol Irigasi:** pilih zona → tentukan target → konfirmasi → jalankan → pantau/hentikan.
+- **Analisis:** operasi, ekonomi, emisi, dan trade-off agrivoltaik.
+- **Simulation Lab:** skenario, waktu model, parameter, seed, model card, dan ekspor CSV 7/30/90 hari.
+- **Tentang Sistem:** arsitektur fisik-digital, skala, implementasi, studi, dan referensi.
 
 Routing memakai `HashRouter` agar setiap rute aman dibuka pada GitHub Pages, misalnya `/#/operate/live`.
 
 ## Fitur interaktif
 
 - **Interactive System Explorer:** komponen dapat diklik; garis energi dan air bergerak mengikuti daya serta debit skenario aktif.
-- **Scenario Control Center:** Play/Pause, jam simulasi, kecepatan 1×/5×/20×, cuaca, irradiance, PLN, level tandon, luas lahan, total head, dan kebutuhan irigasi.
+- **Simulation Lab:** Play/Pause, resolusi 15 menit, kecepatan 1×/5×/20×, skenario, seed, irradiance, PLN, level tandon, luas lahan, total head, dan kebutuhan irigasi.
+- **Synthetic dataset export:** data 7/30/90 hari dalam CSV dengan cuaca, energi, hidraulik, kualitas air, dan kondisi tiap zona.
 - **Scenario comparison:** menyimpan maksimal tiga konfigurasi untuk membandingkan solar fraction, tandon, biaya, dan emisi.
 - **Interactive Field Map:** memilih zona, membaca parameter tanaman, dan mengubah katup simulasi melalui dialog konfirmasi.
 - **Crop Configuration Lab:** profil Padi, Hortikultura, dan Palawija dengan fase tumbuh serta kebutuhan air.
@@ -39,7 +40,7 @@ Seluruh kalkulasi interaktif berbagi satu `SimulationInputs` dan simulation engi
 
 ## Visual direction
 
-Versi 2.2 memakai art direction **clean, technical, agricultural, and grounded**. Komposisi tidak lagi bergantung pada grid card seragam. Setiap chapter memiliki focal point tersendiri, sedangkan `ProjectJourney` pada Home dan `PageContinuation` di akhir chapter menjaga seluruh pengalaman terbaca sebagai satu alur proyek.
+Versi 3 memakai art direction **editorial, agricultural, engineering, and grounded**. Landing publik dan aplikasi operasional menggunakan keluarga warna serta tipografi yang sama: off-white, hijau tua, kuning surya, biru air, dan garis tipis. Informasi teknis ditempatkan bertingkat agar halaman utama tetap tenang.
 
 ## Arsitektur frontend
 
@@ -55,7 +56,7 @@ src/
 ├── pages/               # route-level modules
 ├── services/
 │   ├── contracts/       # interface bebas implementasi data
-│   └── simulation/      # scenario-based telemetry engine
+│   └── simulation/      # physical-rules model, telemetry, dan CSV generator
 └── styles/              # design tokens dan responsive system
 ```
 
@@ -87,7 +88,7 @@ Spesifikasi final harus mengikuti survei debit, total dynamic head, kualitas air
 
 ## Menjalankan lokal
 
-Prasyarat: Node.js 24 dan npm.
+Prasyarat: Node.js LTS dan npm.
 
 ```bash
 npm install
@@ -116,6 +117,6 @@ Push ke `main` menjalankan test, production build, dan deployment GitHub Pages m
 - Repository: <https://github.com/dhefaseptiana/pringgasurya>
 - Website: <https://dhefaseptiana.github.io/pringgasurya/>
 
-## Batas fase
+## Model dan batas fase
 
-Versi ini menyelesaikan frontend dalam Simulation Mode. Historical database, API/SSE, autentikasi, command acknowledgment, audit log, dan koneksi IoT berada pada fase selanjutnya.
+Versi ini menyelesaikan frontend dan model data sintetis dalam **Simulation Mode**. Baca [SIMULATION_MODEL.md](./SIMULATION_MODEL.md) untuk rumus, asumsi, skema data, dan batas validitas. Historical database, API/SSE, autentikasi nyata, command acknowledgment perangkat, dan koneksi IoT berada pada fase selanjutnya.
